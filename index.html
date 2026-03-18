@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mathspaces – Lizenzen kaufen</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      background: #16192a;
+      border-bottom: 1px solid #2d3154;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    header .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #7c6af7;
+      letter-spacing: -0.5px;
+    }
+    header .logo span { color: #e2e8f0; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 56px 16px 32px;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .hero h1 span { color: #7c6af7; }
+    .hero p {
+      color: #94a3b8;
+      font-size: 1.05rem;
+    }
+
+    /* ── Cards grid ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 1060px;
+      padding: 0 24px 60px;
+    }
+
+    .card {
+      background: #1a1d2e;
+      border: 1px solid #2d3154;
+      border-radius: 18px;
+      padding: 32px 26px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:not(.unavailable):hover {
+      border-color: #7c6af7;
+      box-shadow: 0 0 24px rgba(124, 106, 247, 0.18);
+    }
+
+    .card.featured {
+      border-color: #7c6af7;
+      background: #1e1b38;
+    }
+
+    .card.unavailable {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .card-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      background: #7c6af7;
+      color: #fff;
+      border-radius: 20px;
+      padding: 3px 12px;
+      align-self: flex-start;
+    }
+    .card-badge.unavail-badge {
+      background: #374151;
+      color: #9ca3af;
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .card .price {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #7c6af7;
+      line-height: 1.1;
+    }
+    .card .price small {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #94a3b8;
+    }
+
+    .card .desc {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 4px;
+    }
+    .card ul li {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .card ul li::before {
+      content: "✓";
+      color: #7c6af7;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .btn-buy {
+      margin-top: auto;
+      padding: 12px 0;
+      border: none;
+      border-radius: 10px;
+      background: #7c6af7;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-buy:hover { background: #6a58e0; }
+    .btn-buy:active { transform: scale(0.97); }
+    .btn-buy:disabled {
+      background: #374151;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+
+    /* ── Overlay / Modal ── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .overlay.active { display: flex; }
+
+    .modal {
+      background: #1a1d2e;
+      border: 1px solid #2d3154;
+      border-radius: 20px;
+      padding: 36px 32px 32px;
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      animation: popIn 0.22s ease;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    .modal h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .modal .modal-price {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #7c6af7;
+    }
+    .modal .modal-price.free {
+      color: #34d399;
+    }
+
+    .modal label {
+      font-size: 0.88rem;
+      color: #94a3b8;
+    }
+
+    .modal input[type="text"] {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 9px;
+      border: 1px solid #2d3154;
+      background: #0f1117;
+      color: #e2e8f0;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .modal input[type="text"]:focus { border-color: #7c6af7; }
+    .modal input[type="text"]::placeholder { color: #4b5563; }
+
+    .promo-msg {
+      font-size: 0.84rem;
+      min-height: 18px;
+      transition: color 0.2s;
+    }
+    .promo-msg.success { color: #34d399; }
+    .promo-msg.error   { color: #f87171; }
+
+    .modal-btns {
+      display: flex;
+      gap: 10px;
+    }
+    .modal-btns button {
+      flex: 1;
+      padding: 11px 0;
+      border: none;
+      border-radius: 9px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-confirm {
+      background: #7c6af7;
+      color: #fff;
+    }
+    .btn-confirm:hover { background: #6a58e0; }
+    .btn-cancel {
+      background: #1e2235;
+      color: #94a3b8;
+      border: 1px solid #2d3154 !important;
+    }
+    .btn-cancel:hover { background: #252843; }
+
+    /* ── Loading screen ── */
+    .loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      padding: 10px 0;
+    }
+    .spinner {
+      width: 52px;
+      height: 52px;
+      border: 4px solid #2d3154;
+      border-top-color: #7c6af7;
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-screen p {
+      color: #94a3b8;
+      font-size: 0.96rem;
+      text-align: center;
+    }
+    .loading-screen .countdown {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #7c6af7;
+    }
+
+    /* ── License screen ── */
+    .license-screen {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .license-screen h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .license-key-box {
+      background: #0f1117;
+      border: 1px solid #2d3154;
+      border-radius: 10px;
+      padding: 16px 18px;
+      font-family: 'Courier New', monospace;
+      font-size: 1.08rem;
+      color: #a78bfa;
+      letter-spacing: 0.5px;
+      word-break: break-all;
+      text-align: center;
+    }
+
+    .license-note {
+      font-size: 0.88rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .license-note a {
+      color: #7c6af7;
+      text-decoration: none;
+    }
+    .license-note a:hover { text-decoration: underline; }
+
+    .btn-done {
+      padding: 12px 0;
+      border: none;
+      border-radius: 9px;
+      background: #7c6af7;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-done:hover { background: #6a58e0; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: auto;
+      padding: 20px 16px;
+      color: #4b5563;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    /* ── Student-key notice ── */
+    .student-key-notice {
+      font-style: italic;
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+    .student-key-sub {
+      font-size: 0.82rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Math<span>spaces</span></div>
+  </header>
+
+  <section class="hero">
+    <h1>Mathspaces <span>Lizenzen</span></h1>
+    <p>Wähle das passende Abonnement für dich, deine Schüler oder deine Schule.</p>
+  </section>
+
+  <div class="cards">
+
+    <!-- Pro License -->
+    <div class="card featured">
+      <span class="card-badge">Beliebt</span>
+      <h2>Pro Lizenz</h2>
+      <div class="price">1,99 €<small> / Monat</small></div>
+      <ul>
+        <li>Vollständiger Zugriff auf alle Aufgaben</li>
+        <li>Keine Werbung</li>
+        <li>Fortschrittsanalysen</li>
+        <li>Offline-Modus</li>
+      </ul>
+      <button class="btn-buy" onclick="openPromo('pro')">Jetzt kaufen</button>
+    </div>
+
+    <!-- Student License -->
+    <div class="card">
+      <h2>Schüler Lizenz</h2>
+      <div class="price">0,99 €<small> / Monat</small></div>
+      <ul>
+        <li>Zugriff auf Schülerinhalte</li>
+        <li>Hausaufgaben-Tracker</li>
+        <li>Vom Lehrer zuweisbar</li>
+      </ul>
+      <button class="btn-buy" onclick="openPromo('student')">Jetzt kaufen</button>
+    </div>
+
+    <!-- Teacher License -->
+    <div class="card">
+      <h2>Lehrer Lizenz</h2>
+      <div class="price">100 €<small> / Jahr (inkl. 50 Schüler)</small></div>
+      <ul>
+        <li>Bis zu 50 Schülerlizenzen inklusive</li>
+        <li>Klassenmanagement</li>
+        <li>Aufgaben zuweisen & auswerten</li>
+        <li>Detaillierte Berichte</li>
+      </ul>
+      <button class="btn-buy" onclick="openPromo('teacher')">Jetzt kaufen</button>
+    </div>
+
+    <!-- School License -->
+    <div class="card unavailable">
+      <span class="card-badge unavail-badge">Derzeit nicht verfügbar</span>
+      <h2>Schullizenz</h2>
+      <div class="price" style="color:#6b7280">–</div>
+      <p class="desc">Diese Lizenz ist momentan noch nicht verfügbar. Bitte schau bald wieder vorbei.</p>
+      <button class="btn-buy" disabled>Nicht verfügbar</button>
+    </div>
+
+  </div>
+
+  <footer>© 2025 Mathspaces – Alle Rechte vorbehalten</footer>
+
+  <!-- ── Overlay ── -->
+  <div class="overlay" id="overlay">
+
+    <!-- Step 1: Promo Code -->
+    <div class="modal" id="modalPromo">
+      <h3>Bestellung abschließen</h3>
+      <div>
+        <div style="color:#94a3b8;font-size:0.9rem;margin-bottom:4px;">Lizenz:</div>
+        <div style="font-weight:600;font-size:1.05rem;" id="promoLicenseName"></div>
+      </div>
+      <div class="modal-price" id="promoPrice"></div>
+      <div>
+        <label for="promoInput">Aktionscode (optional)</label>
+        <input type="text" id="promoInput" placeholder="z. B. LIZENZ2025" autocomplete="off" oninput="checkPromo()" />
+        <div class="promo-msg" id="promoMsg"></div>
+      </div>
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="closeOverlay()">Abbrechen</button>
+        <button class="btn-confirm" id="btnConfirm" onclick="startConfirmation()">Bestätigen</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Loading -->
+    <div class="modal" id="modalLoading" style="display:none;">
+      <div class="loading-screen">
+        <div class="spinner"></div>
+        <div>
+          <p>Bestellung wird bestätigt…<br>Bitte warte einen Moment.</p>
+        </div>
+        <div class="countdown" id="countdown">20</div>
+      </div>
+    </div>
+
+    <!-- Step 3: License -->
+    <div class="modal" id="modalLicense" style="display:none;">
+      <div class="license-screen">
+        <h3>🎉 Deine Lizenz ist bereit!</h3>
+        <div>
+          <div style="color:#94a3b8;font-size:0.85rem;margin-bottom:8px;">Dein Lizenzschlüssel:</div>
+          <div class="license-key-box" id="licenseKeyBox"></div>
+        </div>
+        <p class="license-note">
+          Aktiviere deine Lizenz unter<br>
+          <a href="https://mathspaces.xmenu.dev" target="_blank" rel="noopener noreferrer">https://mathspaces.xmenu.dev</a>
+        </p>
+        <button class="btn-done" onclick="closeOverlay()">Fertig</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const PROMO_CODE = 'LIZENZ2025';
+
+    const licenses = {
+      pro: {
+        name: 'Pro Lizenz',
+        price: '1,99 €',
+        key: 'PRO-0000-FYQYQPH6-DC8E'
+      },
+      student: {
+        name: 'Schüler Lizenz',
+        price: '0,99 €',
+        key: null // from teacher
+      },
+      teacher: {
+        name: 'Lehrer Lizenz',
+        price: '100 €',
+        key: 'TCH-TD2SGV-DGY6NCB3-LWT1'
+      }
+    };
+
+    let currentType = null;
+    let countdownTimer = null;
+
+    function openPromo(type) {
+      currentType = type;
+      const lic = licenses[type];
+
+      document.getElementById('promoLicenseName').textContent = lic.name;
+      document.getElementById('promoPrice').textContent = lic.price;
+      document.getElementById('promoPrice').className = 'modal-price';
+      document.getElementById('promoInput').value = '';
+      document.getElementById('promoMsg').textContent = '';
+      document.getElementById('promoMsg').className = 'promo-msg';
+
+      showModal('modalPromo');
+      document.getElementById('overlay').classList.add('active');
+    }
+
+    function showModal(id) {
+      ['modalPromo', 'modalLoading', 'modalLicense'].forEach(m => {
+        document.getElementById(m).style.display = (m === id) ? '' : 'none';
+      });
+    }
+
+    function closeOverlay() {
+      document.getElementById('overlay').classList.remove('active');
+      if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+    }
+
+    function checkPromo() {
+      const val = document.getElementById('promoInput').value.trim().toUpperCase();
+      const msg = document.getElementById('promoMsg');
+      const priceEl = document.getElementById('promoPrice');
+      const lic = licenses[currentType];
+
+      if (val === PROMO_CODE) {
+        msg.textContent = '✓ Aktionscode gültig – 100 % Rabatt!';
+        msg.className = 'promo-msg success';
+        priceEl.textContent = '0,00 €';
+        priceEl.className = 'modal-price free';
+      } else if (val.length > 0) {
+        msg.textContent = '✗ Ungültiger Aktionscode.';
+        msg.className = 'promo-msg error';
+        priceEl.textContent = lic.price;
+        priceEl.className = 'modal-price';
+      } else {
+        msg.textContent = '';
+        msg.className = 'promo-msg';
+        priceEl.textContent = lic.price;
+        priceEl.className = 'modal-price';
+      }
+    }
+
+    function startConfirmation() {
+      showModal('modalLoading');
+      let secs = 20;
+      document.getElementById('countdown').textContent = secs;
+
+      countdownTimer = setInterval(() => {
+        secs--;
+        document.getElementById('countdown').textContent = secs;
+        if (secs <= 0) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+          showLicense();
+        }
+      }, 1000);
+    }
+
+    function showLicense() {
+      const lic = licenses[currentType];
+      const box = document.getElementById('licenseKeyBox');
+
+      if (lic.key) {
+        box.textContent = lic.key;
+      } else {
+        // Student license: get from teacher
+        box.innerHTML = '<em class="student-key-notice">Vom Lehrer erhalten<br><span class="student-key-sub">Bitte wende dich an deinen Lehrer,<br>um deinen Lizenzschlüssel zu erhalten.</span></em>';
+      }
+
+      showModal('modalLicense');
+    }
+  </script>
+
+</body>
+</html>
